@@ -18,7 +18,7 @@ protocol APICallerProtocol: AnyObject {
 final class APICaller {
 	
 	private var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather?")
-	var appId = "4931272735a9eca3899ff6aaed5a2a01"
+	var appId = "YourAPIKei"
 	var units = "metric"
 	var query = "london"
 	
