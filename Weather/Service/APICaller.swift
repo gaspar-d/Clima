@@ -8,18 +8,19 @@
 import Foundation
 
 protocol APICallerProtocol: AnyObject {
-	func fetchDataOnStart(completion: @escaping (Result<WeatherModel, Error>) -> Void)
-	func searchCity(with query: String?, completion: @escaping (Result<WeatherModel, Error>) -> Void)
+	typealias handler = (Result<WeatherModel, Error>) -> Void
+	
+	func fetchDataOnStart(completion: @escaping handler)
+	func fetchDataOnTapLocationButton(latitude: String, longitude: String, completion: @escaping handler)
+	func fetchLocationOnSearch(with query: String?, completion: @escaping handler)
 }
 
 final class APICaller {
 	
-	private var baseUrl = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather?appid=4931272735a9eca3899ff6aaed5a2a01&units=metric&q=Osasco")
-	
-	private var baseUrl2: String = "https://api.openweathermap.org/data/2.5/weather?appid=4931272735a9eca3899ff6aaed5a2a01&units=metric&q="
-	
-	private var searchURL: String = "https://api.openweathermap.org/data/2.5/weather?"
-	
+	private var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather?")
+	var appId = "4931272735a9eca3899ff6aaed5a2a01"
+	var units = "metric"
+	var query = "london"
 	
 	private func defaultRequest(url: URL, completion: @escaping (Result<WeatherModel, Error>) -> Void) {
 		let task = URLSession.shared.dataTask(with: url) { data, _, error in
@@ -42,24 +43,40 @@ final class APICaller {
 
 extension APICaller: APICallerProtocol {
 	
-	public func fetchDataOnStart(completion: @escaping (Result<WeatherModel, Error>) -> Void) {
-		guard let url = baseUrl?.url else { return }
+	public func fetchDataOnStart(completion: @escaping handler) {
+		let startQuery = [URLQueryItem(name: "appid", value: appId),
+						  URLQueryItem(name: "units", value: units),
+						  URLQueryItem(name: "q", value: "london")]
+		
+		baseURL?.queryItems = startQuery
+		guard let url = baseURL?.url else { return }
+		
 		defaultRequest(url: url, completion: completion)
 	}
 	
-	public func searchCity(with query: String?, completion: @escaping (Result<WeatherModel, Error>) -> Void) {
-		guard let city = query, !city.isEmpty else { return }
-//		city.trimmingCharacters(in: .whitespaces)
+	public func fetchDataOnTapLocationButton(latitude: String, longitude: String, completion: @escaping handler) {
+		let coordinatesQuery = [URLQueryItem(name: "appid", value: appId),
+								URLQueryItem(name: "units", value: units),
+								URLQueryItem(name: "lat", value: latitude),
+								URLQueryItem(name: "lon", value: longitude)]
 		
-		let searchQuery = [URLQueryItem(name: "appid", value: "4931272735a9eca3899ff6aaed5a2a01"),
-						   URLQueryItem(name: "units", value: "metric"),
-						   URLQueryItem(name: "q", value: city)]
+		baseURL?.queryItems = coordinatesQuery
+		guard let url = baseURL?.url else { return }
 		
-		var urlWithQueries = URLComponents(string: searchURL)
-		urlWithQueries?.queryItems = searchQuery
+		defaultRequest(url: url, completion: completion)
+	}
+	
+	public func fetchLocationOnSearch(with query: String?, completion: @escaping handler) {
+		guard let inputedLocation = query, !inputedLocation.isEmpty else { return }
 		
-		guard let url = urlWithQueries?.url else { return }
+		let searchQuery = [URLQueryItem(name: "appid", value: appId),
+						   URLQueryItem(name: "units", value: units),
+						   URLQueryItem(name: "q", value: inputedLocation)]
+		
+		baseURL?.queryItems = searchQuery
+		guard let url = baseURL?.url else { return }
 		
 		self.defaultRequest(url: url, completion: completion)
 	}
 }
+

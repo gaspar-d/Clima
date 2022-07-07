@@ -6,17 +6,27 @@
 //
 
 import UIKit
+import CoreLocation
 
 final class WeatherController: UIViewController {
 	
 	private var customView: WeatherView?
 	private var viewModel: WeatherViewModelProtocol
 	private var service: APICallerProtocol
+	private let location: CLLocationManager
 	
-	init(viewModel: WeatherViewModelProtocol, service: APICallerProtocol) {
+	init(viewModel: WeatherViewModelProtocol,
+		 service: APICallerProtocol,
+		 location: CLLocationManager)
+	{
 		self.viewModel = viewModel
 		self.service = service
+		self.location = location
 		super.init(nibName: nil, bundle: nil)
+		
+		location.delegate = self
+		location.requestWhenInUseAuthorization()
+		location.requestLocation()
 	}
 	
 	required init?(coder: NSCoder) {
@@ -37,25 +47,6 @@ final class WeatherController: UIViewController {
 		self.view = customView
 	}
 	
-	private func setupData() {
-		viewModel.fetchData { [weak self] result in
-			switch result {
-			case .success(let weather):
-				
-				self?.viewModel.updateModel(with: weather)
-				
-				DispatchQueue.main.async {
-					
-					self?.customView?.setCityLabel(with: self?.viewModel.getName ?? "em branco")
-					self?.customView?.setTemperatureLabel(with: self?.viewModel.getTemp ?? "em branco tbm")
-				}
-				
-			case .failure(let error):
-				print(error)
-			}
-		}
-	}
-	
 	private func setupNavigationBar() {
 		customView?.setSearchBar.delegate = self
 		
@@ -70,25 +61,44 @@ final class WeatherController: UIViewController {
 	}
 	
 	@objc private func didTapLocationButton() {
-		print("Button tapped")
+		didTapRequestLocation()
+	}
+	
+	private func setupData() {
+		viewModel.setDataOnStart { [weak self] result in
+			switch result {
+			case .success(let weather):
+				self?.defaultUpdateModel(with: weather)
+				
+			case .failure(let error):
+				print(error)
+			}
+		}
+	}
+	
+	private func defaultUpdateModel(with model: WeatherModel) {
+		self.viewModel.updateModel(with: model)
+		
+		DispatchQueue.main.async {
+			self.customView?.setLocationLabel(with: self.viewModel.getName ?? "Location")
+			self.customView?.setTemperatureLabel(with: self.viewModel.getTemp ?? "XX")
+			self.customView?.setWeatherImage(with: self.viewModel.getImage ?? "")
+		}
 	}
 }
 
 // MARK: - Extensions
+
+
 extension WeatherController: UISearchBarDelegate {
 	
 	func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-		guard let inputedName = searchBar.text, !inputedName.isEmpty else { return }
+		guard let inputedLocation = searchBar.text, !inputedLocation.isEmpty else { return }
 		
-		viewModel.searchCity(with: inputedName) { [weak self] result in
+		viewModel.setLocationOnSearch(with: inputedLocation) { [weak self] result in
 			switch result {
 			case .success(let weather):
-				self?.viewModel.updateModel(with: weather)
-				
-				DispatchQueue.main.async {
-					self?.customView?.setCityLabel(with: self?.viewModel.getName ?? "")
-					self?.customView?.setTemperatureLabel(with: self?.viewModel.getTemp ?? "")
-				}
+				self?.defaultUpdateModel(with: weather)
 				
 			case .failure(let error):
 				print(error)
@@ -98,3 +108,33 @@ extension WeatherController: UISearchBarDelegate {
 	}
 }
 
+extension WeatherController: CLLocationManagerDelegate {
+	
+	func didTapRequestLocation() {
+		location.requestLocation()
+	}
+	
+	func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+		guard let location = locations.last else { return }
+		
+		let lat = location.coordinate.latitude
+		let lon = location.coordinate.longitude
+		print("longitude", lon)
+		print("latitude", lat)
+		
+		
+		viewModel.setDataOnTapLocationButton(lat: lat, lon: lon) { [weak self] result in
+			switch result {
+			case .success(let weather):
+				self?.defaultUpdateModel(with: weather)
+				
+			case .failure(let error):
+				print(error)
+			}
+		}
+	}
+	
+	func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+		print("Failed to get user Location with: \(error)")
+	}
+}

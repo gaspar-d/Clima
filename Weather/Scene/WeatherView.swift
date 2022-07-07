@@ -71,7 +71,7 @@ final class WeatherView: UIView {
 	private lazy var cityLabel: UILabel = {
 		let label = UILabel()
 		label.translatesAutoresizingMaskIntoConstraints = false
-		label.text = "City"
+		label.text = "Location"
 		label.font = .systemFont(ofSize: 24, weight: .medium)
 		
 		return label
@@ -98,18 +98,28 @@ final class WeatherView: UIView {
 		fatalError()
 	}
 	
+	// MARK: - methods
+	
+	
 	public var setSearchBar: UISearchBar {
 		return searchBar.searchBar
 	}
 	
-	public func setCityLabel(with text: String) {
+	public func setLocationLabel(with text: String) {
 		cityLabel.text = text
 	}
 	
 	public func setTemperatureLabel(with temp: String) {
 		temperatureNumberLabel.text = temp
 	}
+	
+	public func setWeatherImage(with temp: String) {
+		weatherImage.image = UIImage(systemName: temp)
+	}
 }
+
+// MARK: - extensions
+
 
 extension WeatherView: ViewCodeTemplate {
 	func setupComponents() {
