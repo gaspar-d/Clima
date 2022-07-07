@@ -119,9 +119,6 @@ extension WeatherController: CLLocationManagerDelegate {
 		
 		let lat = location.coordinate.latitude
 		let lon = location.coordinate.longitude
-		print("longitude", lon)
-		print("latitude", lat)
-		
 		
 		viewModel.setDataOnTapLocationButton(lat: lat, lon: lon) { [weak self] result in
 			switch result {
