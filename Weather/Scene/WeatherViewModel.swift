@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 
 protocol WeatherViewModelProtocol: AnyObject {
-	typealias handler = (Result<WeatherModel, Error>) -> Void
+	typealias handler = (Result<WeatherModel, NetworkError>) -> Void
 	
 	var getName: String? { get }
 	var getTemp: String? { get }
@@ -40,15 +40,16 @@ extension WeatherViewModel: WeatherViewModelProtocol {
 	}
 	
 	public var getTemp: String? {
-		guard let temp = model.main?.temp else { return "" }
+		guard let temp = model.main?.temp else { return "XX" }
 		
-		let result = String(Int(temp))
-		return result
+		// TODO: - Better than convert to Int and again to String
+		return String(format: "%.0f", temp)
 	}
 	
 	public var getImage: String? {
 		let index = (model.weather?.count ?? 0) - 1
-		guard let weatherID = model.weather![index].id else { return "" }
+		// TODO: - // I had force unwrapped this before.
+		guard let weatherID = model.weather?[index].id else { return "" }
 		
 		switch weatherID {
 		case 200...232:
