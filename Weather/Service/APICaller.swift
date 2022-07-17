@@ -23,15 +23,9 @@ enum NetworkError: Error {
 final class APICaller {
 	
 	private var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather?")
-<<<<<<< HEAD
-	var appId = "YourAPIKei"
-	var units = "metric"
-	var query = "london"
-=======
 	private var appId = "4931272735a9eca3899ff6aaed5a2a01"
 	private var units = "metric"
 	private var query = "london"
->>>>>>> develop
 	
 	// TODO: - // forgot to conform type-alias this param
 	private func defaultRequest(url: URL, completion: @escaping handler) {
