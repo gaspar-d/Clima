@@ -8,6 +8,6 @@
 
 | Clima          |
 | :------------: | 
-| <img src="https://github.com/gaspar-d/Clima/tree/main/Weather/Resources/preview.gif" width="50%" />        |
+| <img src="https://github.com/gaspar-d/Clima/blob/main/Weather/Resources/preview.gif" width="100%" />        |
 
 
