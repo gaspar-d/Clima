@@ -92,7 +92,7 @@ final class WeatherController: UIViewController {
 
 extension WeatherController: UISearchBarDelegate {
 	
-	func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+	public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
 		guard let inputedLocation = searchBar.text, !inputedLocation.isEmpty else { return }
 		
 		viewModel.setLocationOnSearch(with: inputedLocation) { [weak self] result in
@@ -110,11 +110,11 @@ extension WeatherController: UISearchBarDelegate {
 
 extension WeatherController: CLLocationManagerDelegate {
 	
-	func didTapRequestLocation() {
+	public func didTapRequestLocation() {
 		location.requestLocation()
 	}
 	
-	func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+	public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 		guard let location = locations.last else { return }
 		
 		let lat = location.coordinate.latitude
@@ -131,7 +131,7 @@ extension WeatherController: CLLocationManagerDelegate {
 		}
 	}
 	
-	func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+	public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
 		print("Failed to get user Location with: \(error)")
 	}
 }

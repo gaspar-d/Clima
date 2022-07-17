@@ -8,24 +8,36 @@
 import Foundation
 
 protocol APICallerProtocol: AnyObject {
-	typealias handler = (Result<WeatherModel, Error>) -> Void
+	typealias handler = (Result<WeatherModel, NetworkError>) -> Void
 	
 	func fetchDataOnStart(completion: @escaping handler)
 	func fetchDataOnTapLocationButton(latitude: String, longitude: String, completion: @escaping handler)
 	func fetchLocationOnSearch(with query: String?, completion: @escaping handler)
 }
 
+// TODO: - Did a error handler but need to improve for more options
+enum NetworkError: Error {
+	case invalidURL, unknownError
+}
+
 final class APICaller {
 	
 	private var baseURL = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather?")
+<<<<<<< HEAD
 	var appId = "YourAPIKei"
 	var units = "metric"
 	var query = "london"
+=======
+	private var appId = "4931272735a9eca3899ff6aaed5a2a01"
+	private var units = "metric"
+	private var query = "london"
+>>>>>>> develop
 	
-	private func defaultRequest(url: URL, completion: @escaping (Result<WeatherModel, Error>) -> Void) {
+	// TODO: - // forgot to conform type-alias this param
+	private func defaultRequest(url: URL, completion: @escaping handler) {
 		let task = URLSession.shared.dataTask(with: url) { data, _, error in
-			if let error = error {
-				completion(.failure(error))
+			if error != nil {
+				completion(.failure(.invalidURL))
 				
 			} else if let data = data {
 				do {
@@ -33,7 +45,7 @@ final class APICaller {
 					completion(.success(result))
 					
 				} catch {
-					completion(.failure(error))
+					completion(.failure(.unknownError))
 				}
 			}
 		}

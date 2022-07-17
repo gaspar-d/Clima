@@ -42,7 +42,7 @@ final class WeatherView: UIView {
 	private lazy var temperatureNumberLabel: UILabel = {
 		let label = UILabel()
 		label.translatesAutoresizingMaskIntoConstraints = false
-		label.text = "20"
+		label.text = "XX"
 		label.font = .systemFont(ofSize: 88, weight: .heavy)
 		
 		return label
@@ -66,7 +66,6 @@ final class WeatherView: UIView {
 		
 		return stack
 	}()
-	
 	
 	private lazy var cityLabel: UILabel = {
 		let label = UILabel()
@@ -122,12 +121,12 @@ final class WeatherView: UIView {
 
 
 extension WeatherView: ViewCodeTemplate {
-	func setupComponents() {
+	public func setupComponents() {
 		addSubview(backgroundImage)
 		addSubview(stack)
 	}
 	
-	func setupConstraints() {
+	public func setupConstraints() {
 		NSLayoutConstraint.activate([
 			backgroundImage.heightAnchor.constraint(equalTo: heightAnchor),
 			backgroundImage.widthAnchor.constraint(equalTo: widthAnchor),
@@ -140,7 +139,7 @@ extension WeatherView: ViewCodeTemplate {
 		])
 	}
 	
-	func setupExtraConfiguration() {
+	public func setupExtraConfiguration() {
 		backgroundColor = .systemYellow
 	}
 }
