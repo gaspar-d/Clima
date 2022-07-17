@@ -1,26 +1,13 @@
-# Project name
+# Project Clima 
 ---
 ## Description
-- First point
-- Second point
+- My version of a project from Angela Yu course, but this version is MVVM based with Dependency Injection and View Code.
 
 
-## Tables
+## Preview
 
-| FirstName     | LastName      | City  |
-| :------------ |   :---:       | --------: |
-| `John`        | Test1         | `NewYork`   |
-| `Bob`         | Test2         | `Los Angeles`   |
-
-
-## Images
-
-<p float="left" align="center" />
-<img src=:"https://urltoimage.gif" width="33%" />
-<p/>
-
-or 
-
-![Alt text](https://urltoimage.gif)
+| Clima          |
+| :------------: | 
+| <img src=:"https://github.com/gaspar-d/Clima/tree/main/Weather/Resources/preview.gif" width="50%" />        |
 
 
